@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "267057274935",
+    "project_id": "socialapptutorial-177e2",
+    "storage_bucket": "socialapptutorial-177e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267057274935:android:4c9b32ee8d60c0ec7a1fb2",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_06JlFnx7jYcmt9NP-r4bo1wihJ3eSw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
