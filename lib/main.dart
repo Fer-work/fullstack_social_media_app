@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fullstack_social_media_app/app.dart';
-import 'package:fullstack_social_media_app/firebase_options.dart';
+import 'package:fullstack_social_media_app/config/firebase_options.dart';
 
 void main() async {
   // firebase setup

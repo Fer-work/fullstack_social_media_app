@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fullstack_social_media_app/features/auth/presentation/components/my_button.dart';
 import 'package:fullstack_social_media_app/features/auth/presentation/components/my_text_field.dart';
+import 'package:fullstack_social_media_app/features/auth/presentation/cubits/auth_cubit.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? togglePages;
@@ -25,6 +27,34 @@ class _RegisterPageState extends State<RegisterPage> {
     final String email = emailController.text;
     final String password = passwordController.text;
     final String confirmPassword = confirmPasswordController.text;
+
+    // auth cubit
+    final authCubit = context.read<AuthCubit>();
+
+    // ensure the fields aren't empty
+    if (email.isNotEmpty &&
+        name.isNotEmpty &&
+        password.isNotEmpty &&
+        confirmPassword.isNotEmpty) {
+      // Ensure passwords match
+      if (password == confirmPassword) {
+        // passwords don't match
+        authCubit.register(name, email, password);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please complete all fields")));
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -107,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Register button
-                MyButton(onTap: () {}, text: 'Register'),
+                MyButton(onTap: register, text: 'Register'),
 
                 const SizedBox(
                   height: 50,
