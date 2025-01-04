@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fullstack_social_media_app/features/post/presentation/components/my_drawer_tile.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fullstack_social_media_app/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:fullstack_social_media_app/features/home/presentation/components/my_drawer_tile.dart';
+import 'package:fullstack_social_media_app/features/profile/presentation/pages/profile_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -32,14 +35,30 @@ class MyDrawer extends StatelessWidget {
               MyDrawerTile(
                 title: "HOME",
                 icon: Icons.home,
-                onTap: () {},
+                onTap: () => Navigator.of(context).pop(),
               ),
 
               // profile tile
               MyDrawerTile(
                 title: "PROFILE",
                 icon: Icons.person,
-                onTap: () {},
+                onTap: () {
+                  // pop menu drawer
+                  Navigator.of(context).pop();
+
+                  // get current user's id
+                  final user = context.read<AuthCubit>().currentUser;
+                  String? uid = user!.uid;
+
+                  // navigate to the profile page
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                          uid: uid,
+                        ),
+                      ));
+                },
               ),
 
               // search tile
@@ -56,11 +75,13 @@ class MyDrawer extends StatelessWidget {
                 onTap: () {},
               ),
 
+              const Spacer(),
+
               // logout tile
               MyDrawerTile(
                 title: "LOGOUT",
                 icon: Icons.logout,
-                onTap: () {},
+                onTap: () => context.read<AuthCubit>().logout(),
               ),
             ],
           ),
