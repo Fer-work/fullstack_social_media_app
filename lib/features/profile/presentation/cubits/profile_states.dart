@@ -1,27 +1,27 @@
 /*
 
-PROFILE STATES  
+PROFILE STATES
 
 */
 
 import 'package:fullstack_social_media_app/features/profile/domain/entities/profile_user.dart';
 
-abstract class ProfileState {}
+abstract class ProfileStates {}
 
-// initial
-class ProfileInitial extends ProfileState {}
+// initial state
+class ProfileInitial extends ProfileStates {}
 
-// loading...
-class ProfileLoading extends ProfileState {}
+// loading state
+class ProfileLoading extends ProfileStates {}
 
-// loaded
-class ProfileLoaded extends ProfileState {
+// Loaded stated
+class ProfileLoaded extends ProfileStates {
   final ProfileUser profileUser;
   ProfileLoaded(this.profileUser);
 }
 
-// error
-class ProfileError extends ProfileState {
+// error state
+class ProfileError extends ProfileStates {
   final String message;
   ProfileError(this.message);
 }

@@ -11,50 +11,91 @@ class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.user});
 
   @override
-  State<EditProfilePage> createState() => _EditProfileState();
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _EditProfileState extends State<EditProfilePage> {
+class _EditProfilePageState extends State<EditProfilePage> {
   final bioTextController = TextEditingController();
+
+  // update profile button pressed
+  void updateProfile() async {
+    // profile cubit
+    final profileCubit = context.read<ProfileCubit>();
+    if (bioTextController.text.isNotEmpty) {
+      profileCubit.updateProfile(
+        uid: widget.user.uid,
+        newBio: bioTextController.text,
+      );
+    }
+  }
 
   // BUILD UI
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileCubit, ProfileState>(
+    // SCAFFOLD
+    return BlocConsumer<ProfileCubit, ProfileStates>(
       builder: (context, state) {
-        // profile loading...
-
+        // Profile loading...
+        if (state is ProfileLoading) {
+          return const Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Uploading..."),
+                ],
+              ),
+            ),
+          );
+        }
         // profile error
-
-        // edit form
-        return buildEditPage();
+        else {
+          // edit form
+          return buildEditPage();
+        }
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ProfileLoaded) {
+          Navigator.pop(context);
+        }
+      },
     );
   }
 
   Widget buildEditPage({double uploadProgress = 0.0}) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit profile"),
-        foregroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: Column(
-        children: [
-          // profile picture
+        appBar: AppBar(
+          title: Text("Edit profile"),
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          actions: [
+            // save button
+            IconButton(
+              onPressed: updateProfile,
+              icon: const Icon(Icons.upload),
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            // profile picture
 
-          // bio
-          Text("Bio"),
+            // bio
+            const Text("Bio"),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: MyTextField(
-                controller: bioTextController,
-                hintText: widget.user.bio,
-                obscureText: false),
-          ),
-        ],
-      ),
-    );
+            // spacing
+            const SizedBox(
+              height: 10,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: MyTextField(
+                  controller: bioTextController,
+                  hintText: widget.user.bio,
+                  obscureText: false),
+            )
+          ],
+        ));
   }
 }

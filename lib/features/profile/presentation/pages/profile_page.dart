@@ -30,80 +30,78 @@ class _ProfilePageState extends State<ProfilePage> {
     // TODO: implement initState
     super.initState();
 
-    // load user profile data
+    // load the user profile
     profileCubit.fetchUserProfile(widget.uid);
   }
 
   // BUILD UI
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
+    return BlocBuilder<ProfileCubit, ProfileStates>(builder: (context, state) {
       // loaded
       if (state is ProfileLoaded) {
-        // Get loaded user
+        // get loaded user
         final user = state.profileUser;
 
-        // Scaffold
+        // SCAFFOLD
         return Scaffold(
-          // APP BAR
           appBar: AppBar(
             title: Text(user.name),
             foregroundColor: Theme.of(context).colorScheme.primary,
             actions: [
-              // edit profile
+              // edit profile button
               IconButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditProfilePage(user: user),
-                      )),
-                  icon: Icon(Icons.settings))
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(user: user),
+                    )),
+                icon: Icon(Icons.settings),
+              )
             ],
           ),
 
-          // BODY
+          // Body
           body: Column(
             children: [
-              // email
+              // profile email
               Text(
                 user.email,
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
 
               // Spacing
-              const SizedBox(
+              SizedBox(
                 height: 25,
               ),
 
               // profile picture
               Container(
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12)),
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 height: 120,
                 width: 120,
                 padding: EdgeInsets.all(25),
                 child: Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 72,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                  child: Icon(Icons.person,
+                      size: 72, color: Theme.of(context).colorScheme.primary),
                 ),
               ),
 
               // Spacing
-              const SizedBox(
+              SizedBox(
                 height: 25,
               ),
 
-              // Bio box label
+              // bio box
               Padding(
                 padding: const EdgeInsets.only(left: 25.0),
                 child: Row(
                   children: [
                     Text(
-                      'Bio',
+                      "Bio",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
@@ -112,49 +110,39 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               // Spacing
-              const SizedBox(
+              SizedBox(
                 height: 10,
               ),
 
-              // Bio box
               BioBox(text: user.bio),
 
-              // Spacing
-              const SizedBox(
-                height: 10,
-              ),
-
-              // posts box label
+              // posts
               Padding(
                 padding: const EdgeInsets.only(left: 25.0, top: 25),
                 child: Row(
                   children: [
                     Text(
-                      'Posts',
+                      "Posts",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ],
                 ),
               ),
-
-              // posts
-              BioBox(text: user.bio),
             ],
           ),
         );
       }
-
-      // loading..
+      // loading
       else if (state is ProfileLoading) {
-        return const Scaffold(
+        return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
           ),
         );
       } else {
         return const Center(
-          child: Text("No profile found"),
+          child: Text("No profile found.."),
         );
       }
     });

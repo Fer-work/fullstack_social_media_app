@@ -35,7 +35,7 @@ class FirebaseProfileRepo implements ProfileRepo {
   @override
   Future<void> updateProfile(ProfileUser updatedProfile) async {
     try {
-      // convert updated profile to json forma to store in firestore
+      // convert updated profile to json format to store in firestore
       await firebaseFirestore
           .collection('users')
           .doc(updatedProfile.uid)

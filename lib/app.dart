@@ -7,7 +7,6 @@ import 'package:fullstack_social_media_app/features/auth/presentation/pages/auth
 import 'package:fullstack_social_media_app/features/home/presentation/pages/home_page.dart';
 import 'package:fullstack_social_media_app/features/profile/data/firebase_profile_repo.dart';
 import 'package:fullstack_social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
-import 'package:fullstack_social_media_app/features/profile/domain/repos/profile_repo.dart';
 import 'package:fullstack_social_media_app/themes/light_mode.dart';
 
 /*
