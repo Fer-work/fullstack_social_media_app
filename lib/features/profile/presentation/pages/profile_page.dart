@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fullstack_social_media_app/features/auth/domain/entities/app_user.dart';
@@ -27,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
   // on startup
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // load the user profile
@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               // profile email
               Text(
-                user.email,
+                user.name,
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
 
@@ -76,17 +76,24 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               // profile picture
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                height: 120,
-                width: 120,
-                padding: EdgeInsets.all(25),
-                child: Center(
-                  child: Icon(Icons.person,
-                      size: 72, color: Theme.of(context).colorScheme.primary),
+              CachedNetworkImage(
+                imageUrl: user.profileImageUrl,
+                // loading...
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                fit: BoxFit.cover,
+                // error, failed to load
+                errorWidget: (context, url, error) => Icon(Icons.error,
+                    size: 72, color: Theme.of(context).colorScheme.primary),
+                // loaded
+                imageBuilder: (context, imageProvider) => Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
+                  ),
                 ),
               ),
 

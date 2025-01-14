@@ -64,7 +64,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: lightMode,
         home: BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
-          print(authState);
           // - unathenticated -> auth page (login / register)
           if (authState is Unauthenticated) {
             return const AuthPage();

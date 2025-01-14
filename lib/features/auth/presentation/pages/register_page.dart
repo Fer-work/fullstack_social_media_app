@@ -49,7 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();

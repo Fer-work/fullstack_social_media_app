@@ -26,20 +26,24 @@ class FirebaseStorageRepo implements StorageRepo {
   Future<String?> _uploadFile(
       String path, String fileName, String folder) async {
     try {
-      // get file
+      // Get the file
       final file = File(path);
 
-      // find place to store
+      // Define the storage reference
       final storageRef = storage.ref().child('$folder/$fileName');
 
-      // upload
-      final uploadTask = await storageRef.putFile(file);
+      // Define metadata with the MIME type
+      final metadata = SettableMetadata(contentType: 'image/jpeg');
 
-      // get image download url
+      // Upload the file with metadata
+      final uploadTask = await storageRef.putFile(file, metadata);
+
+      // Get the download URL
       final downloadUrl = await uploadTask.ref.getDownloadURL();
 
       return downloadUrl;
     } catch (e) {
+      print('Error uploading file (mobile): $e');
       return null;
     }
   }
@@ -48,17 +52,21 @@ class FirebaseStorageRepo implements StorageRepo {
   Future<String?> _uploadFileBytes(
       Uint8List fileBytes, String fileName, String folder) async {
     try {
-      // find place to store
+      // Define the storage reference
       final storageRef = storage.ref().child('$folder/$fileName');
 
-      // upload
-      final uploadTask = await storageRef.putData(fileBytes);
+      // Define metadata with the MIME type
+      final metadata = SettableMetadata(contentType: 'image/jpeg');
 
-      // get image download url
+      // Upload the file with metadata
+      final uploadTask = await storageRef.putData(fileBytes, metadata);
+
+      // Get the download URL
       final downloadUrl = await uploadTask.ref.getDownloadURL();
 
       return downloadUrl;
     } catch (e) {
+      print('Error uploading file (web): $e');
       return null;
     }
   }

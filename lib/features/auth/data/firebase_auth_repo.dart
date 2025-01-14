@@ -9,7 +9,6 @@ class FirebaseAuthRepo implements AuthRepo {
 
   @override
   Future<AppUser?> loginWithEmailPassword(String email, String password) async {
-    // TODO: implement loginWithEmailPassword
     try {
       // Attemp sign in
       UserCredential userCredential = await firebaseAuth
@@ -29,7 +28,6 @@ class FirebaseAuthRepo implements AuthRepo {
   @override
   Future<AppUser?> registerWithEmailPassword(
       String name, String email, String password) async {
-    // TODO: implement registerWithEmailPassword
     try {
       // Attemp sign up
       UserCredential userCredential = await firebaseAuth
@@ -54,13 +52,11 @@ class FirebaseAuthRepo implements AuthRepo {
 
   @override
   Future<void> logout() async {
-    // TODO: implement logout
     await firebaseAuth.signOut();
   }
 
   @override
   Future<AppUser?> getCurrentUser() async {
-    // TODO: implement getCurrentUser
     // get current logged in user from firebase
     final firebaseUser = firebaseAuth.currentUser;
 

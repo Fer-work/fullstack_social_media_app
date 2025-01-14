@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:267057274935:android:4c9b32ee8d60c0ec7a1fb2",
+        "mobilesdk_app_id": "1:267057274935:android:891a554e67e8a5687a1fb2",
         "android_client_info": {
-          "package_name": "com.example.app"
+          "package_name": "com.example.fullstack_social_media_app"
         }
       },
       "oauth_client": [],

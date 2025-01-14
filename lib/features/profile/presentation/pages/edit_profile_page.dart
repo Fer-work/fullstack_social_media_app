@@ -110,97 +110,94 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Widget buildEditPage() {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Edit profile"),
-          foregroundColor: Theme.of(context).colorScheme.primary,
-          actions: [
-            // save button
-            IconButton(
-              onPressed: updateProfile,
-              icon: const Icon(Icons.upload),
-            )
-          ],
-        ),
-        body: Column(
-          children: [
-            // profile picture
-            Center(
-              child: Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    shape: BoxShape.circle,
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child:
-                      // display selected image for mobile
-                      (!kIsWeb && imagePickedFile != null)
-                          ? Image.file(
-                              File(imagePickedFile!.path!),
-                              fit: BoxFit.cover,
-                            )
-                          :
-
-                          // display selected image for web
-                          (kIsWeb && webImage != null)
-                              ? Image.memory(
-                                  webImage!,
-                                  fit: BoxFit.cover,
-                                )
-                              :
-                              // no image selected, then display the existing profile pic
-                              CachedNetworkImage(
-                                  imageUrl: widget.user.profileImageUrl,
-                                  // loading...
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  // error, failed to load
-                                  errorWidget: (context, url, error) => Icon(
-                                      Icons.person,
-                                      size: 72,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                  // loaded
-                                  imageBuilder: (context, imageProvider) =>
-                                      Image(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )),
-            ),
-
-            // spacing
-            const SizedBox(
-              height: 25,
-            ),
-
-            // pick image button
-            Center(
-              child: MaterialButton(
-                onPressed: pickImage,
-                color: Colors.blue,
-                child: const Text("Pick image"),
+      appBar: AppBar(
+        title: Text("Edit profile"),
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        actions: [
+          // Save button
+          IconButton(
+            onPressed: updateProfile,
+            icon: const Icon(Icons.upload),
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Profile picture
+          Center(
+            child: Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                shape: BoxShape.circle,
               ),
+              clipBehavior: Clip.hardEdge,
+              child: (!kIsWeb && imagePickedFile != null)
+                  ? Image.file(
+                      File(imagePickedFile!.path!),
+                      fit: BoxFit.cover,
+                    )
+                  : (kIsWeb && webImage != null)
+                      ? Image.memory(
+                          webImage!,
+                          fit: BoxFit.cover,
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: widget.user.profileImageUrl,
+                          // Loading placeholder
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: const CircularProgressIndicator(),
+                            ),
+                          ),
+                          // Error widget
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.person,
+                            size: 72,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          // Loaded image
+                          imageBuilder: (context, imageProvider) => Image(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
             ),
+          ),
 
-            // bio
-            const Text("Bio"),
+          // Spacing
+          const SizedBox(height: 25),
 
-            // spacing
-            const SizedBox(
-              height: 10,
+          // Pick image button
+          Center(
+            child: MaterialButton(
+              onPressed: pickImage,
+              color: Colors.blue,
+              child: const Text("Pick image"),
             ),
+          ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: MyTextField(
-                  controller: bioTextController,
-                  hintText: widget.user.bio,
-                  obscureText: false),
-            )
-          ],
-        ));
+          // Bio label
+          const Text("Bio"),
+
+          // Spacing
+          const SizedBox(height: 10),
+
+          // Bio text field
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: MyTextField(
+              controller: bioTextController,
+              hintText: widget.user.bio,
+              obscureText: false,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
