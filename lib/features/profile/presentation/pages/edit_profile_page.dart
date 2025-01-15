@@ -29,6 +29,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // bio text controller
   final bioTextController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    bioTextController.text = widget.user.bio;
+  }
+
   // pick image
   Future<void> pickImage() async {
     final result = await FilePicker.platform.pickFiles(
@@ -70,7 +76,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     // nothing to update, go to previous page
     else {
-      Navigator.pop(context);
+      Navigator.of(context).pop();
     }
   }
 
@@ -112,7 +118,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit profile"),
-        foregroundColor: Theme.of(context).colorScheme.primary,
+        // foregroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           // Save button
           IconButton(
@@ -134,38 +140,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 shape: BoxShape.circle,
               ),
               clipBehavior: Clip.hardEdge,
-              child: (!kIsWeb && imagePickedFile != null)
-                  ? Image.file(
-                      File(imagePickedFile!.path!),
-                      fit: BoxFit.cover,
-                    )
-                  : (kIsWeb && webImage != null)
-                      ? Image.memory(
-                          webImage!,
+              child:
+                  // display selected image for mobile
+                  (!kIsWeb && imagePickedFile != null)
+                      ? Image.file(
+                          File(imagePickedFile!.path!),
                           fit: BoxFit.cover,
                         )
-                      : CachedNetworkImage(
-                          imageUrl: widget.user.profileImageUrl,
-                          // Loading placeholder
-                          placeholder: (context, url) => Center(
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: const CircularProgressIndicator(),
+                      :
+                      // display selected image for web
+                      (kIsWeb && webImage != null)
+                          ? Image.memory(
+                              webImage!,
+                              fit: BoxFit.cover,
+                            )
+                          :
+                          // No image selected, display existing profile image
+                          CachedNetworkImage(
+                              imageUrl: widget.user.profileImageUrl,
+                              cacheKey: widget.user.uid,
+                              // Loading placeholder
+                              placeholder: (context, url) => Center(
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: const CircularProgressIndicator(),
+                                ),
+                              ),
+
+                              // Error widget, failed to load
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.person,
+                                size: 72,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              // Loaded image
+                              imageBuilder: (context, imageProvider) => Image(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          // Error widget
-                          errorWidget: (context, url, error) => Icon(
-                            Icons.person,
-                            size: 72,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          // Loaded image
-                          imageBuilder: (context, imageProvider) => Image(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
             ),
           ),
 
@@ -182,7 +196,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
 
           // Bio label
-          const Text("Bio"),
+          Text(
+            "Bio",
+          ),
 
           // Spacing
           const SizedBox(height: 10),

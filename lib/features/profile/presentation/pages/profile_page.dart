@@ -78,9 +78,16 @@ class _ProfilePageState extends State<ProfilePage> {
               // profile picture
               CachedNetworkImage(
                 imageUrl: user.profileImageUrl,
+                cacheKey: user.uid,
                 // loading...
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
+                placeholder: (context, url) => Center(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: const CircularProgressIndicator(),
+                  ),
+                ),
+
                 fit: BoxFit.cover,
                 // error, failed to load
                 errorWidget: (context, url, error) => Icon(Icons.error,

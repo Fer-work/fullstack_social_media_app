@@ -5,6 +5,8 @@ import 'package:fullstack_social_media_app/features/auth/presentation/cubits/aut
 import 'package:fullstack_social_media_app/features/auth/presentation/cubits/auth_states.dart';
 import 'package:fullstack_social_media_app/features/auth/presentation/pages/auth_page.dart';
 import 'package:fullstack_social_media_app/features/home/presentation/pages/home_page.dart';
+import 'package:fullstack_social_media_app/features/post/data/firebase_post_repo.dart';
+import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_cubit.dart';
 import 'package:fullstack_social_media_app/features/profile/data/firebase_profile_repo.dart';
 import 'package:fullstack_social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:fullstack_social_media_app/features/storage/data/firebase_storage_repo.dart';
@@ -40,6 +42,9 @@ class MyApp extends StatelessWidget {
   // Storage repo
   final firebaseStorageRepo = FirebaseStorageRepo();
 
+  // post repo
+  final firebasePostRepo = FirebasePostRepo();
+
   MyApp({super.key});
 
   @override
@@ -56,9 +61,18 @@ class MyApp extends StatelessWidget {
         // profile cubit
         BlocProvider<ProfileCubit>(
           create: (context) => ProfileCubit(
-              profileRepo: firebaseProfileRepo,
-              storageRepo: firebaseStorageRepo),
-        )
+            profileRepo: firebaseProfileRepo,
+            storageRepo: firebaseStorageRepo,
+          ),
+        ),
+
+        // Post cubit
+        BlocProvider<PostCubit>(
+          create: (context) => PostCubit(
+            firebasePostRepo,
+            firebaseStorageRepo,
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

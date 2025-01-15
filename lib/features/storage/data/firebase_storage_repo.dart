@@ -5,6 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fullstack_social_media_app/features/storage/domain/storage_repo.dart';
 
 class FirebaseStorageRepo implements StorageRepo {
+  /*
+    Firebase Storage profiles
+  */
   final FirebaseStorage storage = FirebaseStorage.instance;
 
   // mobile platform
@@ -16,6 +19,21 @@ class FirebaseStorageRepo implements StorageRepo {
   @override
   Future<String?> uploadProfileImageWeb(Uint8List fileBytes, String fileName) {
     return _uploadFileBytes(fileBytes, fileName, "profile_images");
+  }
+
+  /*
+    Firebase Storage posts
+  */
+
+  // mobile platform
+  @override
+  Future<String?> uploadPostImageMobile(String path, String fileName) {
+    return _uploadFile(path, fileName, "post_images");
+  }
+
+  @override
+  Future<String?> uploadPostImageWeb(Uint8List fileBytes, String fileName) {
+    return _uploadFileBytes(fileBytes, fileName, "post_images");
   }
 
   /*
@@ -33,10 +51,10 @@ class FirebaseStorageRepo implements StorageRepo {
       final storageRef = storage.ref().child('$folder/$fileName');
 
       // Define metadata with the MIME type
-      final metadata = SettableMetadata(contentType: 'image/jpeg');
+      // final metadata = SettableMetadata(contentType: 'image/jpeg');
 
       // Upload the file with metadata
-      final uploadTask = await storageRef.putFile(file, metadata);
+      final uploadTask = await storageRef.putFile(file);
 
       // Get the download URL
       final downloadUrl = await uploadTask.ref.getDownloadURL();
@@ -56,10 +74,10 @@ class FirebaseStorageRepo implements StorageRepo {
       final storageRef = storage.ref().child('$folder/$fileName');
 
       // Define metadata with the MIME type
-      final metadata = SettableMetadata(contentType: 'image/jpeg');
+      // final metadata = SettableMetadata(contentType: 'image/jpeg');
 
       // Upload the file with metadata
-      final uploadTask = await storageRef.putData(fileBytes, metadata);
+      final uploadTask = await storageRef.putData(fileBytes);
 
       // Get the download URL
       final downloadUrl = await uploadTask.ref.getDownloadURL();

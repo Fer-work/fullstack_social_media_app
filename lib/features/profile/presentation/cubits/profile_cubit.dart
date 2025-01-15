@@ -35,6 +35,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
       Uint8List? imageWebBytes,
       String? imageMobilePath}) async {
     emit(ProfileLoading());
+
     try {
       // fetch current profile first
       final currentUser = await profileRepo.fetchUserProfile(uid);
