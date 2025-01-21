@@ -37,128 +37,133 @@ class _ProfilePageState extends State<ProfilePage> {
   // BUILD UI
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileStates>(builder: (context, state) {
-      // loaded
-      if (state is ProfileLoaded) {
-        // get loaded user
-        final user = state.profileUser;
+    return BlocBuilder<ProfileCubit, ProfileStates>(
+      builder: (context, state) {
+        // loaded
+        if (state is ProfileLoaded) {
+          // get loaded user
+          final user = state.profileUser;
 
-        // SCAFFOLD
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(user.name),
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            actions: [
-              // edit profile button
-              IconButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProfilePage(user: user),
-                    )),
-                icon: Icon(Icons.settings),
-              )
-            ],
-          ),
+          // SCAFFOLD
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(user.name),
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              actions: [
+                // edit profile button
+                IconButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(user: user),
+                      )),
+                  icon: Icon(Icons.settings),
+                )
+              ],
+            ),
 
-          // Body
-          body: Column(
-            children: [
-              // profile email
-              Text(
-                user.name,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
+            // Body
+            body: Column(
+              children: [
+                // profile name
+                Text(
+                  user.name,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                ),
 
-              // Spacing
-              SizedBox(
-                height: 25,
-              ),
+                // Spacing
+                SizedBox(
+                  height: 25,
+                ),
 
-              // profile picture
-              CachedNetworkImage(
-                imageUrl: user.profileImageUrl,
-                cacheKey: user.uid,
-                // loading...
-                placeholder: (context, url) => Center(
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: const CircularProgressIndicator(),
+                // profile picture
+                CachedNetworkImage(
+                  imageUrl: user.profileImageUrl,
+                  cacheKey: user.uid,
+                  // loading...
+                  placeholder: (context, url) => Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: const CircularProgressIndicator(),
+                    ),
+                  ),
+                  fit: BoxFit.cover,
+                  // error, failed to load
+                  errorWidget: (context, url, error) =>
+                      // Text(user.profileImageUrl),
+                      Icon(Icons.error,
+                          size: 72,
+                          color: Theme.of(context).colorScheme.primary),
+                  // loaded
+                  imageBuilder: (context, imageProvider) => Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
                   ),
                 ),
 
-                fit: BoxFit.cover,
-                // error, failed to load
-                errorWidget: (context, url, error) => Icon(Icons.error,
-                    size: 72, color: Theme.of(context).colorScheme.primary),
-                // loaded
-                imageBuilder: (context, imageProvider) => Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.cover),
+                // Spacing
+                SizedBox(
+                  height: 25,
+                ),
+
+                // bio box
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Bio",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
                   ),
                 ),
-              ),
 
-              // Spacing
-              SizedBox(
-                height: 25,
-              ),
-
-              // bio box
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Bio",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ],
+                // Spacing
+                SizedBox(
+                  height: 10,
                 ),
-              ),
 
-              // Spacing
-              SizedBox(
-                height: 10,
-              ),
+                BioBox(text: user.bio),
 
-              BioBox(text: user.bio),
-
-              // posts
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0, top: 25),
-                child: Row(
-                  children: [
-                    Text(
-                      "Posts",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ],
+                // posts
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0, top: 25),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Posts",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
-      // loading
-      else if (state is ProfileLoading) {
-        return Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      } else {
-        return const Center(
-          child: Text("No profile found.."),
-        );
-      }
-    });
+              ],
+            ),
+          );
+        }
+        // loading
+        else if (state is ProfileLoading) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          return const Center(
+            child: Text("No profile found.."),
+          );
+        }
+      },
+    );
   }
 }

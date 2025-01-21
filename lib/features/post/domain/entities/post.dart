@@ -17,7 +17,7 @@ class Post {
     required this.timestamp,
   });
 
-  Post copywith({String? imageUrl}) {
+  Post copyWith({String? imageUrl}) {
     return Post(
       id: id,
       userId: userId,
