@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fullstack_social_media_app/features/home/presentation/components/my_drawer.dart';
-import 'package:fullstack_social_media_app/features/home/presentation/components/post_tile.dart';
+import 'package:fullstack_social_media_app/features/post/presentation/components/post_tile.dart';
 import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_cubit.dart';
 import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_states.dart';
 import 'package:fullstack_social_media_app/features/post/presentation/pages/upload_post_page.dart';
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                 // get individual post
                 final post = allPosts[index];
 
-                // image
+                // post
                 return PostTile(
                   post: post,
                   onDeletePressed: () => deletePost(post.id),
