@@ -10,10 +10,10 @@ class PostCubit extends Cubit<PostState> {
   final PostRepo postRepo;
   final StorageRepo storageRepo;
 
-  PostCubit(
-    this.postRepo,
-    this.storageRepo,
-  ) : super(PostInitial());
+  PostCubit({
+    required this.postRepo,
+    required this.storageRepo,
+  }) : super(PostInitial());
 
   // create a new post
   Future<void> createPost(Post post,
@@ -34,7 +34,7 @@ class PostCubit extends Cubit<PostState> {
       }
 
       // give image url to post
-      final newPost = post.copywith(imageUrl: imageUrl);
+      final newPost = post.copyWith(imageUrl: imageUrl);
 
       // create post in the backend
       postRepo.createPost(newPost);
@@ -65,6 +65,15 @@ class PostCubit extends Cubit<PostState> {
       fetchAllPosts(); // might need to remove this later since this is from copilot and not the tutorial
     } catch (e) {
       emit(PostError(message: "Error deleting post: $e"));
+    }
+  }
+
+  // toggle like on a post
+  Future<void> toggleLikePost(String postId, String userId) async {
+    try {
+      await postRepo.toggleLikePost(postId, userId);
+    } catch (e) {
+      emit(PostError(message: "Error toggling like: $e"));
     }
   }
 }

@@ -7,6 +7,7 @@ class Post {
   final String text;
   final String imageUrl;
   final DateTime timestamp;
+  final List<String> likes; // store uids of people who liked the post
 
   Post({
     required this.id,
@@ -15,9 +16,10 @@ class Post {
     required this.text,
     required this.imageUrl,
     required this.timestamp,
+    required this.likes,
   });
 
-  Post copywith({String? imageUrl}) {
+  Post copyWith({String? imageUrl}) {
     return Post(
       id: id,
       userId: userId,
@@ -25,6 +27,7 @@ class Post {
       text: text,
       imageUrl: imageUrl ?? this.imageUrl,
       timestamp: timestamp,
+      likes: likes,
     );
   }
 
@@ -37,6 +40,7 @@ class Post {
       'text': text,
       'imageUrl': imageUrl,
       'timestamp': Timestamp.fromDate(timestamp),
+      'likes': likes,
     };
   }
 
@@ -49,6 +53,7 @@ class Post {
       text: json['text'],
       imageUrl: json['imageUrl'],
       timestamp: (json['timestamp'] as Timestamp).toDate(),
+      likes: List<String>.from(json['likes'] ?? []),
     );
   }
 }

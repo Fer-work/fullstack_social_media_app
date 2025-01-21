@@ -69,8 +69,8 @@ class MyApp extends StatelessWidget {
         // Post cubit
         BlocProvider<PostCubit>(
           create: (context) => PostCubit(
-            firebasePostRepo,
-            firebaseStorageRepo,
+            postRepo: firebasePostRepo,
+            storageRepo: firebaseStorageRepo,
           ),
         ),
       ],

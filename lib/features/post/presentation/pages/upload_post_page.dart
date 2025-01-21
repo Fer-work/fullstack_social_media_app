@@ -63,10 +63,18 @@ class _UploadPostPageState extends State<UploadPostPage> {
   // create and upload post
   void uploadPost() {
     // check if both image and caption are provided
-    if (imagePickedFile == null || textCrontroller.text.isEmpty) {
+    if (imagePickedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please provide both image and caption"),
+          content: Text("Please provide both image."),
+        ),
+      );
+      return;
+    }
+    if (textCrontroller.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please provide a caption."),
         ),
       );
       return;
@@ -74,12 +82,14 @@ class _UploadPostPageState extends State<UploadPostPage> {
 
     // create a new post object
     final newPost = Post(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: currentUser!.uid,
-        userName: currentUser!.name,
-        text: textCrontroller.text,
-        imageUrl: "",
-        timestamp: DateTime.now());
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      userId: currentUser!.uid,
+      userName: currentUser!.name,
+      text: textCrontroller.text,
+      imageUrl: "",
+      timestamp: DateTime.now(),
+      likes: [],
+    );
 
     // post cubit
     final postCubit = context.read<PostCubit>();
@@ -108,6 +118,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
   // BUILD UI
   @override
   Widget build(BuildContext context) {
+    // Bloc Consumer = builder + listener
     return BlocConsumer<PostCubit, PostState>(
       builder: (context, state) {
         print(state);
@@ -136,7 +147,9 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   Widget buildUploadPage() {
+    // SCAFFOLD
     return Scaffold(
+      // APP BAR
       appBar: AppBar(
         title: const Text("Upload Post"),
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -148,6 +161,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
           ),
         ],
       ),
+      // BODY
       body: Center(
         child: Column(
           children: [
