@@ -12,6 +12,9 @@ import 'package:fullstack_social_media_app/features/profile/presentation/cubits/
 import 'package:fullstack_social_media_app/features/storage/data/firebase_storage_repo.dart';
 import 'package:fullstack_social_media_app/themes/light_mode.dart';
 
+import 'features/search/data/firebase_search_repo.dart';
+import 'features/search/presentation/cubits/search_cubit.dart';
+
 /*
 
 APP - Root Level
@@ -45,6 +48,9 @@ class MyApp extends StatelessWidget {
   // post repo
   final firebasePostRepo = FirebasePostRepo();
 
+  // search repo
+  final firebaseSearchRepo = FirebaseSearchRepo();
+
   MyApp({super.key});
 
   @override
@@ -72,6 +78,11 @@ class MyApp extends StatelessWidget {
             firebasePostRepo,
             firebaseStorageRepo,
           ),
+        ),
+
+        // search cubit
+        BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(searchRepo: firebaseSearchRepo),
         ),
       ],
       child: MaterialApp(
