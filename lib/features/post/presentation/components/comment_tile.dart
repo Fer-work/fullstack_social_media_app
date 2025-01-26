@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fullstack_social_media_app/features/auth/domain/entities/app_user.dart';
 import 'package:fullstack_social_media_app/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fullstack_social_media_app/features/post/domain/entities/comment.dart';
+import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_cubit.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;
@@ -31,23 +32,70 @@ class _CommentTileState extends State<CommentTile> {
     isOwnPost = (widget.comment.userId == currentUser!.uid);
   }
 
+  // show options for deletion
+  void showOptions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Comment?"),
+        actions: [
+          // cancel button
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Cancel"),
+          ),
+          // delete button
+          TextButton(
+            onPressed: () {
+              context
+                  .read<PostCubit>()
+                  .deleteComment(widget.comment.postId, widget.comment.id);
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Delete",
+              style:
+                  TextStyle(color: Colors.black, backgroundColor: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // Name
           Text(
             widget.comment.userName,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(width: 10),
+
+          SizedBox(
+            width: 50,
+          ),
+
           // Comment text
           Text(widget.comment.text),
+
           const Spacer(),
 
           //delete button
+          if (isOwnPost)
+            GestureDetector(
+              onTap: showOptions,
+              child: Icon(
+                Icons.more_horiz,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
         ],
       ),
     );

@@ -9,6 +9,8 @@ import 'package:fullstack_social_media_app/features/post/data/firebase_post_repo
 import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_cubit.dart';
 import 'package:fullstack_social_media_app/features/profile/data/firebase_profile_repo.dart';
 import 'package:fullstack_social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:fullstack_social_media_app/features/search/data/firebase_search_repo.dart';
+import 'package:fullstack_social_media_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:fullstack_social_media_app/features/storage/data/firebase_storage_repo.dart';
 import 'package:fullstack_social_media_app/themes/light_mode.dart';
 
@@ -45,6 +47,9 @@ class MyApp extends StatelessWidget {
   // post repo
   final firebasePostRepo = FirebasePostRepo();
 
+  // search repo
+  final firebaseSearchRepo = FirebaseSearchRepo();
+
   MyApp({super.key});
 
   @override
@@ -73,11 +78,17 @@ class MyApp extends StatelessWidget {
             storageRepo: firebaseStorageRepo,
           ),
         ),
+
+        // search cubit. BlocProvider is a Bloc widget that injects a Cubit instance into the widget tree, ensures that state management is easily accesible to child widgets
+        BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(searchRepo: firebaseSearchRepo),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: lightMode,
         home: BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
+          print(authState);
           // - unathenticated -> auth page (login / register)
           if (authState is Unauthenticated) {
             return const AuthPage();

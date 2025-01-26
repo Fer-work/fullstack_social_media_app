@@ -9,4 +9,5 @@ import 'package:fullstack_social_media_app/features/profile/domain/entities/prof
 abstract class ProfileRepo {
   Future<ProfileUser?> fetchUserProfile(String uid);
   Future<void> updateProfile(ProfileUser updatedProfile);
+  Future<void> toggleFollow(String currentUserId, String targetUid);
 }

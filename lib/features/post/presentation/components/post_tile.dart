@@ -11,6 +11,7 @@ import 'package:fullstack_social_media_app/features/post/presentation/cubits/pos
 import 'package:fullstack_social_media_app/features/post/presentation/cubits/post_states.dart';
 import 'package:fullstack_social_media_app/features/profile/domain/entities/profile_user.dart';
 import 'package:fullstack_social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:fullstack_social_media_app/features/profile/presentation/pages/profile_page.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -81,24 +82,27 @@ class _PostTileState extends State<PostTile> {
     });
 
     // update like
-    postCubit
-        .toggleLikePost(widget.post.id, currentUser!.uid)
-        .catchError((error) {
-      // if there is an error revert back to original state
-      setState(() {
-        if (isLIked) {
-          widget.post.likes.add(currentUser!.uid);
-        } else {
-          widget.post.likes.remove(currentUser!.uid);
-        }
-      });
-    });
+    postCubit.toggleLikePost(widget.post.id, currentUser!.uid).catchError(
+      (error) {
+        // if there is an error revert back to original state
+        setState(
+          () {
+            if (isLIked) {
+              widget.post.likes.add(currentUser!.uid);
+            } else {
+              widget.post.likes.remove(currentUser!.uid);
+            }
+          },
+        );
+      },
+    );
   }
 
   /*
   COMMENTS
   */
-//comment text controller
+
+  //comment text controller
   final commentTextController = TextEditingController();
 
   //open comment box--> user wants to type a new comment
@@ -135,8 +139,8 @@ class _PostTileState extends State<PostTile> {
     final newComment = Comment(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       postId: widget.post.id,
-      userId: widget.post.userId,
-      userName: widget.post.userName,
+      userId: currentUser!.uid,
+      userName: currentUser!.name,
       text: commentTextController.text,
       timestamp: DateTime.now(),
     );
@@ -153,7 +157,7 @@ class _PostTileState extends State<PostTile> {
     super.dispose();
   }
 
-  // show optionsfor deletion
+  // show options for deletion
   void showOptions() {
     showDialog(
       context: context,
@@ -189,195 +193,226 @@ class _PostTileState extends State<PostTile> {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.secondary,
-      child: Column(
-        children: [
-          // top section: profile pic / name / delete
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                //Profile Pic
-                postUser?.profileImageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: postUser!.profileImageUrl,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person_2),
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+      child: Expanded(
+        child: Column(
+          children: [
+            // top section: profile pic / name / delete
+            GestureDetector(
+              // original code was Navigator.push()
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                    uid: widget.post.userId,
+                  ),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    //Profile Pic
+                    postUser?.profileImageUrl != null
+                        ? CachedNetworkImage(
+                            imageUrl: postUser!.profileImageUrl,
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.person_2),
+                            imageBuilder: (context, imageProvider) => Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
+                          )
+                        : Icon(Icons.person_2),
+
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    // Name
+                    Text(widget.post.userName),
+
+                    // Spacer
+                    const Spacer(),
+
+                    // delete button
+                    if (isOwnPost)
+                      GestureDetector(
+                        onTap: showOptions,
+                        child: Icon(
+                          Icons.delete,
+                          color: Theme.of(context).colorScheme.inversePrimary,
                         ),
                       )
-                    : Icon(Icons.person_2),
-
-                const SizedBox(
-                  width: 10,
+                  ],
                 ),
-                // Name
-                Text(widget.post.userName),
-
-                // Spacer
-                const Spacer(),
-
-                // delete button
-                if (isOwnPost)
-                  GestureDetector(
-                    onTap: showOptions,
-                    child: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-                  )
-              ],
+              ),
             ),
-          ),
-          // Image
-          CachedNetworkImage(
-            imageUrl: widget.post.imageUrl,
-            height: 430,
-            width: 430,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const SizedBox(
+            // Image
+            CachedNetworkImage(
+              imageUrl: widget.post.imageUrl,
               height: 430,
+              width: 430,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const SizedBox(
+                height: 430,
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          ),
 
-          // bottom section: like / comment / timestamp
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 6),
-            padding: EdgeInsets.all(6),
-            child: Row(
-              children: [
-                // like button
-                SizedBox(
-                  width: 50,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: toggleLikePost,
-                        child: Icon(
-                          widget.post.likes.contains(currentUser!.uid)
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: widget.post.likes.contains(currentUser!.uid)
-                              ? Colors.red
-                              : Theme.of(context).colorScheme.primary,
+            // bottom section: like / comment / timestamp
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 6),
+              padding: EdgeInsets.all(6),
+              child: Row(
+                children: [
+                  // like button
+                  SizedBox(
+                    width: 50,
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: toggleLikePost,
+                          child: Icon(
+                            widget.post.likes.contains(currentUser!.uid)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: widget.post.likes.contains(currentUser!.uid)
+                                ? Colors.red
+                                : Theme.of(context).colorScheme.primary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        widget.post.likes.length.toString(),
-                        style: TextStyle(
-                          color: widget.post.likes.contains(currentUser!.uid)
-                              ? Theme.of(context).colorScheme.inversePrimary
-                              : Theme.of(context).colorScheme.primary,
+                        const SizedBox(
+                          width: 5,
                         ),
-                      ),
-                    ],
+                        // like count
+                        Text(
+                          widget.post.likes.length.toString(),
+                          style: TextStyle(
+                            color: widget.post.likes.contains(currentUser!.uid)
+                                ? Theme.of(context).colorScheme.inversePrimary
+                                : Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(
-                  width: 20,
-                ),
-
-                // comment button
-                GestureDetector(
-                  onTap: openNewCommentBox,
-                  child: Icon(
-                    Icons.comment,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                  const SizedBox(
+                    width: 20,
                   ),
-                ),
-                Text(widget.post.comments.length.toString()),
-                //Text("Comments:"),
 
-                const SizedBox(
-                  width: 20,
-                ),
-
-                // timestamp
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    widget.post.timestamp.toString(),
-                    style: TextStyle(
+                  // comment button
+                  GestureDetector(
+                    onTap: openNewCommentBox,
+                    child: Icon(
+                      Icons.comment,
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
-                ),
-              ],
+
+                  // comments length
+                  Text(
+                    widget.post.comments.length.toString(),
+                    style: TextStyle(
+                      color: widget.post.likes.contains(currentUser!.uid)
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+
+                  const SizedBox(
+                    width: 20,
+                  ),
+
+                  // timestamp
+                  GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      widget.post.timestamp.toString(),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          // CAPTION
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-            child: Row(
-              children: [
-                // Username
-                Text(
-                  widget.post.userName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 10),
-                // Text
-                Text(widget.post.text),
 
-                // COMMENT SECTION
-                BlocBuilder<PostCubit, PostState>(
-                  builder: (context, state) {
-                    // LOADED
-                    if (state is PostLoaded) {
-                      // Final individual post
-                      final post = state.posts
-                          .firstWhere((post) => post.id == widget.post.id);
+            // CAPTION
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Expanded(
+                child: Column(
+                  children: [
+                    // Username
+                    Text(
+                      widget.post.userName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
 
-                      if (post.comments.isNotEmpty) {
-                        // How many comments to show
-                        int showCommentCount = post.comments.length;
-                        // Comment section
-                        return ListView.builder(
-                          itemCount: showCommentCount,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            // Get individual comment
-                            final comment = post.comments[index];
+                    const SizedBox(width: 10),
 
-                            // Comment tile UI
-                            return CommentTile(comment: comment);
+                    // Text
+                    Text(widget.post.text),
+
+                    Column(
+                      children: [
+                        // COMMENT SECTION
+                        BlocBuilder<PostCubit, PostState>(
+                          builder: (context, state) {
+                            // LOADED
+                            if (state is PostLoaded) {
+                              // Final individual post
+                              final post = state.posts.firstWhere(
+                                  (post) => (post.id == widget.post.id));
+
+                              if (post.comments.isNotEmpty) {
+                                // How many comments to show
+                                int showCommentCount = post.comments.length;
+                                // Comment section
+                                return ListView.builder(
+                                  itemCount: showCommentCount,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    // Get individual comment
+                                    final comment = post.comments[index];
+
+                                    // Comment tile UI
+                                    return CommentTile(comment: comment);
+                                  },
+                                );
+                              }
+                            }
+                            // LOADING..
+                            if (state is PostLoading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            // ERROR
+                            else if (state is PostError) {
+                              return Center(child: Text(state.message));
+                            } else {
+                              return const SizedBox();
+                            }
                           },
-                        );
-                      }
-                    }
-                    // LOADING..
-                    if (state is PostLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    // ERROR
-                    else if (state is PostError) {
-                      return Center(child: Text(state.message));
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                )
-              ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

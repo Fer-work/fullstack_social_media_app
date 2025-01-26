@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/rendering/box.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fullstack_social_media_app/features/home/presentation/components/my_drawer.dart';
 import 'package:fullstack_social_media_app/features/post/presentation/components/post_tile.dart';
@@ -46,55 +47,59 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Home"),
         foregroundColor: Theme.of(context).colorScheme.primary,
-        actions: [
-          // upload new post button
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // navigate to the create post page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return UploadPostPage();
-                  },
-                ),
-              );
-            },
-          ),
-        ],
       ),
 
       // Drawer
       drawer: const MyDrawer(),
 
+      // FloatingActionButton
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to the create post page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UploadPostPage()),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+
       // BODY
       body: BlocBuilder<PostCubit, PostState>(
         builder: (context, state) {
-          // loading
+          // Loading state
           if (state is PostLoading || state is PostUploading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          // loaded
+          // Loaded state
           else if (state is PostLoaded) {
             final allPosts = state.posts;
-            print(allPosts);
+
             if (allPosts.isEmpty) {
-              return const Center(
-                child: Text("No posts found"),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.inbox, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    Text(
+                      "No posts found",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
 
-            // otherwise, if there are posts
             return ListView.builder(
               itemCount: allPosts.length,
               itemBuilder: (context, index) {
-                // get individual post
                 final post = allPosts[index];
-
-                // post
                 return PostTile(
                   post: post,
                   onDeletePressed: () => deletePost(post.id),
@@ -102,11 +107,16 @@ class _HomePageState extends State<HomePage> {
               },
             );
           }
-
-          // error
+          // Error state
           else if (state is PostError) {
             return Center(
-              child: Text(state.message),
+              child: Text(
+                state.message.isNotEmpty
+                    ? state.message
+                    : "An error occurred. Please try again.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red),
+              ),
             );
           } else {
             return const SizedBox();
